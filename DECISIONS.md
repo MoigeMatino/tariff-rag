@@ -43,3 +43,33 @@ The guide is a single A2 poster exported from Adobe Illustrator. `make inspect` 
 
 Consequence: a pipeline that chunks extracted text would retrieve fees nobody can see on the
 poster and miss sections everybody can see. The ground truth must come from what is rendered.
+
+## 004. Ingest from a checked transcription of the rendered poster
+
+Status: accepted
+
+Follows from 003. The text layer cannot be the source of truth, so the poster is transcribed from
+rendered crops into `data/transcript/tariff_guide.json`, one section per table with its region on
+the page. Each section starts as `draft` and becomes `verified` only after the owner compares it
+with the poster. The transcript records the SHA-256 of the edition it was made from, and loading
+fails on a mismatch.
+
+The text layer is still used as a cross-check: `make crosscheck` searches each table's region for
+the amounts in that table. On the first transcript, every amount in the four readable tables was
+found and none of the six Treasury amounts were, which matches 003.
+
+Rejected: chunking text extracted with pdfplumber or PyMuPDF, for the reasons in 003. Rejected for
+now: OCR of the rendered poster, which adds a dependency and its own errors, for a corpus small
+enough to transcribe and check by hand.
+
+Known limit: the transcript is written by the same assistant that drafts the eval answers, so the
+owner's review of both is the independent check. Until then, no result counts.
+
+## 005. Chunk by table, write rows as column-value pairs
+
+Status: accepted
+
+Fee tables lose their meaning when a value is separated from its header or band. Each chunk holds
+rows from one table only, every row repeats its column names, and tables over 12 rows split into
+balanced parts between items, never inside one (all seven agency withdrawal bands stay together).
+Chunk ids are `<section>-<nn>` so they stay stable for citations and eval results.
