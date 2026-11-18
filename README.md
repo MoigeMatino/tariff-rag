@@ -25,17 +25,17 @@ bank's site.
 
 ```mermaid
 flowchart LR
-    pdf[Tariff guide PDF] -->|verify-source: SHA-256 check| tiles[Rendered poster]
-    tiles -->|transcribed and checked by eye| transcript[data/transcript/tariff_guide.json]
-    pdf -.->|text layer, cross-check only| crosscheck[make crosscheck]
+    pdf["Tariff guide PDF"] -->|"SHA-256 check"| tiles["Rendered poster"]
+    tiles -->|"transcribed, checked by eye"| transcript["Transcript JSON"]
+    pdf -.->|"text layer, cross-check only"| crosscheck["make crosscheck"]
     transcript --> crosscheck
-    transcript --> chunker[chunking.py]
-    chunker --> chunks[(Chunks with section, page, region)]
-    chunks -.-> retriever[BM25 retriever: planned]
-    question[User question] -.-> retriever
-    retriever -.-> llm[Claude with cited context: planned]
-    llm -.-> checks[Citation and fallback checks: planned]
-    checks -.-> answer[Answer with citations or fallback]
+    transcript --> chunker["Chunker"]
+    chunker --> chunks[("Chunks with section, page, region")]
+    chunks -.-> retriever["BM25 retriever (planned)"]
+    question["User question"] -.-> retriever
+    retriever -.-> llm["Claude with cited context (planned)"]
+    llm -.-> checks["Citation and fallback checks (planned)"]
+    checks -.-> answer["Answer with citations or fallback"]
 ```
 
 Solid lines are built. Dotted lines are planned.
