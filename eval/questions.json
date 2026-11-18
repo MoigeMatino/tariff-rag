@@ -1,0 +1,162 @@
+{
+  "status": "draft",
+  "edition_sha256": "0458c6257367f632fafcdc1e2187b172c26c131e9bffcb0d5bed48323497c759",
+  "notes": [
+    "DRAFT. Expected answers were drafted from the rendered poster and must be checked by the owner before any score is reported.",
+    "expected_values are the strings a correct answer must contain after normalisation (case, spaces, 'Ksh.' vs 'Ksh').",
+    "expected_section is a section id in data/transcript/tariff_guide.json. The guide is one page, so expected_page is always 1 for answerable questions.",
+    "Fallback questions were checked against the PDF text layer only. Parts of the poster do not extract, so confirm by eye that each topic is absent."
+  ],
+  "questions": [
+    {
+      "id": "q01",
+      "type": "answerable",
+      "question": "What is the annual fee for a Co-op Bank Gold credit card?",
+      "expected_answer": "Ksh.6000, charged on issuance of the card and every subsequent year.",
+      "expected_values": ["Ksh.6000"],
+      "expected_section": "card-fees",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "q02",
+      "type": "answerable",
+      "question": "How much does it cost to withdraw Ksh 15,000 at a Co-op Bank agent?",
+      "expected_answer": "Ksh.80 (band 10,001-20,000). Agency charges do not include excise duty.",
+      "expected_values": ["Ksh.80"],
+      "expected_section": "agency-banking",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "q03",
+      "type": "answerable",
+      "question": "What is the charge for sending Ksh 5,000 by Pesalink through an agent?",
+      "expected_answer": "Ksh.20, the agency Pesalink charge for amounts above 1,000.",
+      "expected_values": ["Ksh.20"],
+      "expected_section": "agency-banking",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "q04",
+      "type": "answerable",
+      "question": "How much is a balance inquiry at an agent?",
+      "expected_answer": "Ksh.10.",
+      "expected_values": ["Ksh.10"],
+      "expected_section": "agency-banking",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "q05",
+      "type": "answerable",
+      "question": "What is the monthly maintenance fee on a USD current account?",
+      "expected_answer": "USD 5 per month. The savings account equivalent has no maintenance fee (Nil).",
+      "expected_values": ["USD 5"],
+      "expected_section": "foreign-currency-accounts",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "q06",
+      "type": "answerable",
+      "question": "Is there a charge for depositing USD 50,000 cash into my foreign currency account?",
+      "expected_answer": "Yes. Deposits above USD 40,000 are charged 0.25% of the amount. Up to USD 40,000 is free.",
+      "expected_values": ["0.25%"],
+      "expected_section": "foreign-currency-accounts",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "q07",
+      "type": "answerable",
+      "question": "What does the bank charge to buy Treasury bills on my behalf?",
+      "expected_answer": "Ksh.1,500 flat rate plus excise duty, for government securities bought for retail investors through the bank's nominee pool account.",
+      "expected_values": ["Ksh.1,500"],
+      "expected_section": "treasury-and-transfers",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "q08",
+      "type": "answerable",
+      "question": "How much is an outgoing RTGS transfer?",
+      "expected_answer": "Ksh.500 regardless of amount, plus excise duty.",
+      "expected_values": ["Ksh.500"],
+      "expected_section": "treasury-and-transfers",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "q09",
+      "type": "answerable",
+      "question": "What happens if I pay my credit card late?",
+      "expected_answer": "A late payment fee of 1.25% of the minimum payable, charged per occurrence.",
+      "expected_values": ["1.25%"],
+      "expected_section": "card-fees",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "q10",
+      "type": "answerable",
+      "question": "What is the minimum opening balance for a YEA account?",
+      "expected_answer": "Nil. There is no minimum opening balance.",
+      "expected_values": ["Nil"],
+      "expected_section": "yea-account",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "q11",
+      "type": "fallback",
+      "question": "What is the arrangement fee for an overdraft?",
+      "expected_answer": "Fallback: the tariff guide does not cover overdraft fees.",
+      "expected_values": [],
+      "expected_section": null,
+      "expected_page": null,
+      "status": "draft"
+    },
+    {
+      "id": "q12",
+      "type": "fallback",
+      "question": "How much is the application fee for a Co-op Bank mortgage?",
+      "expected_answer": "Fallback: the tariff guide does not list mortgage or home loan fees.",
+      "expected_values": [],
+      "expected_section": null,
+      "expected_page": null,
+      "status": "draft"
+    },
+    {
+      "id": "q13",
+      "type": "fallback",
+      "question": "What is today's US dollar to Kenya shilling exchange rate?",
+      "expected_answer": "Fallback: the guide lists fees, not exchange rates.",
+      "expected_values": [],
+      "expected_section": null,
+      "expected_page": null,
+      "status": "draft"
+    },
+    {
+      "id": "q14",
+      "type": "fallback",
+      "question": "How much does Equity Bank charge for an agent cash withdrawal of Ksh 10,000?",
+      "expected_answer": "Fallback: the guide only covers Co-op Bank charges. It must not answer with the Co-op agency fee.",
+      "expected_values": [],
+      "expected_section": null,
+      "expected_page": null,
+      "status": "draft"
+    },
+    {
+      "id": "q15",
+      "type": "fallback",
+      "question": "Should I get a Gold or a Platinum credit card?",
+      "expected_answer": "Fallback: the guide lists fees but gives no recommendation. Quoting both cards' fees with citations is acceptable; recommending one is not.",
+      "expected_values": [],
+      "expected_section": null,
+      "expected_page": null,
+      "status": "draft"
+    }
+  ]
+}
