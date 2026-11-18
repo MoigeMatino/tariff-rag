@@ -23,7 +23,9 @@ more than cleverness.
   `sha256` in `data/source.json`. If a test or eval fails, fix the code or report the failure.
   Changing the answer key to make a run pass invalidates the whole evaluation.
 - Do not add dependencies without asking first.
-- Do not commit or push. The owner reviews and commits each step.
+- Commit in small logical steps with clear messages and push to `origin main` on GitHub. Do not
+  add Claude attribution to commits (no Co-Authored-By or "Generated with" lines). Never commit
+  `.env` or the source PDF.
 
 ## Reporting results
 
