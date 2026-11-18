@@ -1,0 +1,138 @@
+{
+  "source_sha256": "0458c6257367f632fafcdc1e2187b172c26c131e9bffcb0d5bed48323497c759",
+  "page_size": [1190.55, 1683.78],
+  "sections": [
+    {
+      "id": "general-notes",
+      "title": "General notes",
+      "page": 1,
+      "region": [36, 62, 800, 94],
+      "status": "draft",
+      "columns": ["Note"],
+      "rows": [
+        {"cells": ["Excise duty will apply to all fees, charges and commisions."]},
+        {"cells": ["Information captured is subject to change."]},
+        {"cells": ["Please contact your nearest branch for charges / fees not captured in this poster."]},
+        {"cells": ["Charges and Fees are captured as of 9th September 2026."]}
+      ],
+      "notes": ["Title is ours. On the poster this text sits above the first table with no heading."]
+    },
+    {
+      "id": "card-fees",
+      "title": "Card Applicable Fees",
+      "page": 1,
+      "region": [36, 94, 393, 520],
+      "status": "draft",
+      "columns": ["Card Applicable Fees", "Charges", "Details"],
+      "rows": [
+        {"cells": ["Debit Card Maintenance fees", "Ksh.200", "Per Year"]},
+        {"cells": ["Joining Fees - Credit Card", "Classic Card: Ksh.3000; Gold Card: Ksh.3500; Platinum Card: Ksh.4000", "One-off charge (Currently waived)"]},
+        {"cells": ["Annual Fees", "Classic Card: Ksh.3500; Gold Card: Ksh.6000; Platinum Card: Ksh.7000", "On issuance of the card & thereafter on every subsequent year"]},
+        {"cells": ["Supplementary card Annual Fee", "Classic Card: Ksh.3000; Gold Card: free up to the 4th card, from 5th card onward Ksh.3000; Platinum Card: free up to 4th card, from 5th card onward Ksh.3500", "On issuance of the card & thereafter on every subsequent year"]},
+        {"cells": ["Interest Rate", "3.5% of the revolved balance per month", "Revolved balance is the amount of card debt unpaid at the end of each credit cycle of 50 days"]},
+        {"cells": ["Late Payment Fees", "1.25% of minimum payable", "Per occurrence, whenever the cardholder pays the card dues past due date (pays late)"]},
+        {"cells": ["Bonus Fees", "5% of amount awarded", "Per occurrence, whenever the cardholder requests for a bonus (additional funds beyond the approved credit limit)"]},
+        {"cells": ["Cash Advance Fee", "6% of the amount accessed", "Per occurrence, whenever the cardholder accesses cash"]},
+        {"cells": ["Card Replacement Fees", "Classic Card: Ksh.500; Gold Card: Ksh.500; Platinum Card: Ksh.1000", "Per occurrence, whenever the cardholder requests for a card replacement"]},
+        {"cells": ["Over limit Fees", "Ksh.1000", "It is per occurrence, i.e. whenever the customer goes over the set/allowed limit"]},
+        {"cells": ["Payment of goods and services (purchases)", "FREE", "N/A"]},
+        {"cells": ["SMS alerts", "FREE", "N/A"]},
+        {"cells": ["Card Insurance", "Cardholder pays for insurance 0.39% of credit card limit", "Per year (Bank Pays for Gold and Platinum cardholders)"]}
+      ]
+    },
+    {
+      "id": "agency-banking",
+      "title": "Agency Tariff Guide",
+      "page": 1,
+      "region": [36, 522, 393, 798],
+      "status": "draft",
+      "columns": ["Service", "Range (Ksh.)", "Cost (Charges do not include excise duty)"],
+      "rows": [
+        {"cells": ["Cash withdrawals", "100-5,000", "Ksh.50"]},
+        {"cells": ["Cash withdrawals", "5,001-10,000", "Ksh.70"]},
+        {"cells": ["Cash withdrawals", "10,001-20,000", "Ksh.80"]},
+        {"cells": ["Cash withdrawals", "20,001-30,000", "Ksh.100"]},
+        {"cells": ["Cash withdrawals", "30,001-40,000", "Ksh.120"]},
+        {"cells": ["Cash withdrawals", "40,001-50,000", "Ksh.140"]},
+        {"cells": ["Cash withdrawals", "50,001-100,000", "Ksh.250"]},
+        {"cells": ["Cash deposits/ Payments", "All", "Free"]},
+        {"cells": ["*Funds Transfer", "", "Ksh.50"]},
+        {"cells": ["*Fees Payment", "", "Ksh.50"]},
+        {"cells": ["Utility Payment (KPLC Postpaid, Water companies)", "", "Ksh.50"]},
+        {"cells": ["Pesalink Transactions", "0-1,000", "Ksh.0"]},
+        {"cells": ["Pesalink Transactions", "Above 1,000", "Ksh.20"]},
+        {"cells": ["Cash Withdrawals (With Kenswitch card)", "Any Amount", "Ksh.125"]},
+        {"cells": ["Balance Inquiry", "", "Ksh.10"]},
+        {"cells": ["Mini Statement", "", "Ksh.20"]},
+        {"cells": ["Other services (NHIF payments, County Payments, Other Government Payments)", "", "Free"]}
+      ],
+      "notes": ["The poster marks Funds Transfer and Fees Payment with an asterisk but does not explain it."]
+    },
+    {
+      "id": "foreign-currency-accounts",
+      "title": "Foreign Currency Accounts (USD, GBP, EUR)",
+      "page": 1,
+      "region": [36, 800, 393, 1284],
+      "status": "draft",
+      "columns": ["Item", "Current Account (Memo Group 02120, 03120 & 22120)", "Savings Account (Memo Group 02100, 03100 & 22100)"],
+      "rows": [
+        {"cells": ["Opening Balance", "USD 10; GBP 10; EUR 10", "USD 10; GBP 10; EUR 10"]},
+        {"cells": ["Minimum Operating Balance", "Nil", "Nil"]},
+        {"cells": ["Account Maintenance Fee (Per Month)", "USD 5; GBP 5; EUR 5", "Nil"]},
+        {"cells": ["Stop payments", "USD 4; GBP 4; EUR 4", "N/A"]},
+        {"cells": ["Unpaid Cheques, Refer to Drawer & Effects Not Cleared", "USD 25; EUR 25; GBP 25", "N/A"]},
+        {"cells": ["Encashment of Third-Party Cheques drawn own bank", "USD 5; GBP 5; EUR 5", "N/A"]},
+        {"cells": ["Internal Transfer (Self)", "Free", "Free"]},
+        {"cells": ["Outward SWIFT", "Ksh.1,500 equivalent in respective currency", "Ksh.1,500 equivalent in respective currency"]},
+        {"cells": ["Statement", "USD 2.0; EUR 2.0; GBP 2.0; Free E-statement", "USD 2.0; EUR 2.0; GBP 2.0; Free E-statement"]},
+        {"cells": ["Dormant Account Re-activation", "Nil", "Nil"]},
+        {"cells": ["Cash withdrawal", "0.25% for amounts above USD 5,000, GBP 3,800, EUR 4,700", "0.25% for amounts above USD 5,000, GBP 3,800, EUR 4,700"]},
+        {"cells": ["Cash deposit", "Up to USD 40,000 - Free; Above USD 40,000, GBP 30,000 & EUR 38,000 - 0.25% of the amount", "Up to USD 40,000 - Free; Above USD 40,000, GBP 30,000 & EUR 38,000 - 0.25% of the amount"]},
+        {"cells": ["Account Closure", "USD 5; EUR 5; GBP 5", "USD 5; EUR 5; GBP 5"]}
+      ],
+      "notes": [
+        "Title is ours. The poster table has no heading; it is identified by its currency columns.",
+        "NB: Where there are conversions from one currency to another, the bank doesn't charge withdrawal or cash handling fee."
+      ]
+    },
+    {
+      "id": "treasury-and-transfers",
+      "title": "Treasury Bills, Foreign Transfers and Other Money Transfer Charges",
+      "page": 1,
+      "region": [36, 1286, 393, 1577],
+      "status": "draft",
+      "columns": ["Service", "Charges"],
+      "rows": [
+        {"group": "Purchase of Treasury Bills/ Bonds on behalf of customers", "cells": ["Government securities for retail investors through the bank's nominee pool account", "Ksh.1,500 flat rate plus excise duty"]},
+        {"group": "Foreign Transfer of Funds (Outward): Mail Transfer", "cells": ["Customers", "Ksh.1,500"]},
+        {"group": "Foreign Transfer of Funds (Outward): Mail Transfer", "cells": ["Non-Customer", "Ksh.1,500"]},
+        {"group": "Foreign Currency Drafts (In Ksh or Equivalent in Forex)", "cells": ["Drafts on application", "Ksh.500 plus cash handling charges (where applicable)"]},
+        {"group": "Foreign Currency Drafts (In Ksh or Equivalent in Forex)", "cells": ["Postage", "Ksh.100"]},
+        {"group": "Foreign Currency Drafts (In Ksh or Equivalent in Forex)", "cells": ["Stamp duty", "Ksh.2.50"]},
+        {"group": "Foreign Transfer of Funds (Inwards)", "cells": ["Bills of Collection", "Commission of Ksh.1,000 Plus excise duty; Courier charges (as per what has been charged by the service provider)"]},
+        {"group": "Foreign Transfer of Funds (Inwards)", "cells": ["Unpaid cheques", "Commission of Ksh.1,000 Plus excise duty"]},
+        {"group": "Other Money Transfer Charges", "cells": ["Incoming RTGS", "Free"]},
+        {"group": "Other Money Transfer Charges", "cells": ["RTGS Out going", "Ksh.500 regardless of amount Plus excise duty"]},
+        {"group": "Other Money Transfer Charges", "cells": ["SWIFT Charges (Outgoing)", "Ksh.1,500 regardless of amount Plus excise duty"]},
+        {"group": "Other Money Transfer Charges", "cells": ["Incoming SWIFT payments", "Ksh.500 Plus excise duty"]},
+        {"group": "Other Money Transfer Charges", "cells": ["Outgoing/Incoming Customer Requests/Inquires/Amendments through SWIFT", "Ksh.600"]}
+      ],
+      "notes": [
+        "Title is ours. The poster stacks several sub-tables here; their headings are kept as row groups.",
+        "This region extracts as punctuation in every PDF text extractor tested (DECISIONS.md 003)."
+      ]
+    },
+    {
+      "id": "yea-account",
+      "title": "YEA Account",
+      "page": 1,
+      "region": [36, 1579, 393, 1624],
+      "status": "draft",
+      "columns": ["YEA Account", "Value"],
+      "rows": [
+        {"cells": ["Minimum opening balance", "Nil"]},
+        {"cells": ["Minimum operating balance", "Nil"]}
+      ]
+    }
+  ]
+}

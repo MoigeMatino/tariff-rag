@@ -1,4 +1,4 @@
-.PHONY: install lint test verify-source inspect check
+.PHONY: install lint test verify-source inspect crosscheck check
 
 install:
 	uv sync
@@ -15,5 +15,8 @@ verify-source:
 
 inspect: verify-source
 	uv run python scripts/inspect_pdf.py
+
+crosscheck: verify-source
+	uv run python scripts/crosscheck_transcript.py
 
 check: lint test
