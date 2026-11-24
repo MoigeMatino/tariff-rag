@@ -13,6 +13,7 @@ from typing import Protocol
 from rank_bm25 import BM25Okapi
 
 from tariff_rag.chunking import Chunk
+from tariff_rag.embeddings import Embedder
 
 
 @dataclass(frozen=True)
@@ -65,3 +66,30 @@ class BM25Retriever:
         if not tokens:
             return []
         return top_k(self.chunks, self._index.get_scores(tokens), k)
+
+
+class VectorRetriever:
+    """Ranks chunks by cosine similarity between the question and chunk embeddings.
+
+    The index is a plain numpy matrix held in memory (DECISIONS.md 001): with a few dozen chunks,
+    one matrix-vector product per query is fast and needs no vector database.
+    """
+
+    def __init__(self, chunks: Sequence[Chunk], embedder: Embedder):
+        self.chunks = list(chunks)
+        self.embedder = embedder
+        self.name = f"vector: {embedder.name}"
+        if embedder.max_tokens is not None:
+            too_long = [
+                c.id for c in self.chunks if embedder.count_tokens(c.text) > embedder.max_tokens
+            ]
+            if too_long:
+                # The model would silently drop the end of these chunks, so refuse to index them.
+                raise ValueError(f"chunks longer than {embedder.max_tokens} tokens: {too_long}")
+        self._matrix = embedder.embed_documents([c.text for c in self.chunks])
+
+    def search(self, query: str, k: int = 3) -> list[Hit]:
+        if not query.strip():
+            return []
+        scores = self._matrix @ self.embedder.embed_query(query)
+        return top_k(self.chunks, scores, k)
