@@ -1,4 +1,4 @@
-.PHONY: install lint test verify-source inspect crosscheck check
+.PHONY: install lint test verify-source inspect crosscheck eval-retrieval check
 
 install:
 	uv sync
@@ -18,5 +18,8 @@ inspect: verify-source
 
 crosscheck: verify-source
 	uv run python scripts/crosscheck_transcript.py
+
+eval-retrieval:
+	uv run python scripts/eval_retrieval.py
 
 check: lint test
