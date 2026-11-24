@@ -35,41 +35,22 @@ def fmt(x: float) -> str:
     return f"{x:.2f}"
 
 
-def main() -> None:
-    eval_set = json.loads((ROOT / "eval" / "questions.json").read_text())
-    questions = eval_set["questions"]
-    answerable = [q for q in questions if q["type"] == "answerable"]
-    fallback = [q for q in questions if q["type"] == "fallback"]
-    chunks = chunk_transcript(load_transcript())
-    retrievers = build_retrievers(chunks)
+def ranking_report(title, questions, retrievers, chunks) -> list[str]:
+    """Hit@1, hit@3 and MRR per retriever for one question set, plus per-question ranks."""
     n = len(chunks)
+    ranks = {
+        r.name: [
+            first_relevant_rank(r.search(q["question"], k=n), q["expected_section"])
+            for q in questions
+        ]
+        for r in retrievers
+    }
 
     def n_relevant(q):
         return sum(c.section_id == q["expected_section"] for c in chunks)
 
-    ranks: dict[str, list[int | None]] = {}
-    top_scores: dict[str, tuple[list[float], list[float]]] = {}
-    for r in retrievers:
-        ranks[r.name] = [
-            first_relevant_rank(r.search(q["question"], k=n), q["expected_section"])
-            for q in answerable
-        ]
-
-        def top(q, r=r):
-            hits = r.search(q["question"], k=1)
-            return hits[0].score if hits else 0.0
-
-        top_scores[r.name] = ([top(q) for q in answerable], [top(q) for q in fallback])
-
     lines = [
-        "# Retrieval eval",
-        "",
-        f"Answer key status: **{eval_set['status']}**. Scores are provisional until the owner "
-        "has checked the expected answers.",
-        f"Corpus: {n} chunks from {len({c.section_id for c in chunks})} sections "
-        "(poster column 1 only). A hit is any chunk from the question's expected section.",
-        "",
-        f"## Answerable questions ({len(answerable)})",
+        f"## {title} ({len(questions)} questions)",
         "",
         "| Retriever | Hit@1 | Hit@3 | MRR |",
         "|---|---|---|---|",
@@ -79,19 +60,55 @@ def main() -> None:
             f"| {name} | {fmt(hit_at_k(rs, 1))} | {fmt(hit_at_k(rs, 3))} | "
             f"{fmt(mean_reciprocal_rank(rs))} |"
         )
-    random_at_1 = mean(random_hit_at_k(n_relevant(q), n, 1) for q in answerable)
-    random_at_3 = mean(random_hit_at_k(n_relevant(q), n, 3) for q in answerable)
+    random_at_1 = mean(random_hit_at_k(n_relevant(q), n, 1) for q in questions)
+    random_at_3 = mean(random_hit_at_k(n_relevant(q), n, 3) for q in questions)
     lines.append(f"| random ranking (expected) | {fmt(random_at_1)} | {fmt(random_at_3)} | n/a |")
 
     lines += ["", "Rank of the first chunk from the expected section (1 is best):", ""]
     lines += ["| Question | Expected section | " + " | ".join(ranks) + " |"]
     lines += ["|---|---|" + "---|" * len(ranks)]
-    for i, q in enumerate(answerable):
+    for i, q in enumerate(questions):
         cells = " | ".join(str(ranks[name][i] or "miss") for name in ranks)
         lines.append(f"| {q['id']} {q['question']} | {q['expected_section']} | {cells} |")
+    return lines + [""]
 
-    lines += [
+
+def main() -> None:
+    eval_set = json.loads((ROOT / "eval" / "questions.json").read_text())
+    customer_set = json.loads((ROOT / "eval" / "customer_questions.json").read_text())
+    answerable = [q for q in eval_set["questions"] if q["type"] == "answerable"]
+    fallback = [q for q in eval_set["questions"] if q["type"] == "fallback"]
+    customer = [q for q in customer_set["questions"] if q["type"] == "answerable"]
+    chunks = chunk_transcript(load_transcript())
+    retrievers = build_retrievers(chunks)
+    n = len(chunks)
+
+    top_scores: dict[str, tuple[list[float], list[float]]] = {}
+    for r in retrievers:
+
+        def top(q, r=r):
+            hits = r.search(q["question"], k=1)
+            return hits[0].score if hits else 0.0
+
+        top_scores[r.name] = ([top(q) for q in answerable], [top(q) for q in fallback])
+
+    statuses = {eval_set["status"], customer_set["status"]}
+    lines = [
+        "# Retrieval eval",
         "",
+        f"Answer key status: **{', '.join(sorted(statuses))}**. Scores are provisional until the "
+        "owner has checked the expected answers.",
+        f"Corpus: {n} chunks from {len({c.section_id for c in chunks})} sections "
+        "(poster column 1 only). A hit is any chunk from the question's expected section.",
+        "",
+    ]
+    lines += ranking_report(
+        "Poster-worded questions, eval/questions.json", answerable, retrievers, chunks
+    )
+    lines += ranking_report(
+        "Customer-worded questions, eval/customer_questions.json", customer, retrievers, chunks
+    )
+    lines += [
         f"## Can a score threshold detect fallback questions? ({len(fallback)} questions)",
         "",
         "Top-1 score per question. A threshold can only separate the two groups if every "
