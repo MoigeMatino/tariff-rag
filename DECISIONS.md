@@ -92,9 +92,15 @@ Two findings from building it:
   add it ourselves. On the current eval it makes no difference (both variants: hit@1 0.90, MRR
   0.95).
 
-Results on the draft eval (10 questions, 11 chunks): BM25 hit@1 1.00, vector 0.90, random 0.19.
-BM25 is kept as the baseline and both retrievers stay. The current questions use the poster's
-wording, so they cannot show the paraphrase cases vector search is meant for.
+Results (draft answer keys, 11 chunks), hit@1:
+
+- Poster-worded questions (10): BM25 1.00, vector 0.90, random 0.19.
+- Customer-worded questions (15), added because the first set could not test paraphrase: BM25
+  0.47, vector 0.80 (0.73 without the query prefix), random 0.19.
+
+Vector retrieval is the default, because users describe needs rather than quote product names.
+BM25 stays as the baseline in every eval run. The query prefix stays on: it made no difference on
+poster wording and helped on customer wording.
 
 Fallback will not use a retrieval score threshold. For every retriever, the highest-scoring
 fallback question scored above the lowest-scoring answerable one (vector 0.707 vs 0.578, BM25

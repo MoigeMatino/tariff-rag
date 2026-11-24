@@ -88,24 +88,31 @@ Vectors are L2-normalised, so the dot product is the cosine. The bge query instr
 questions (not to chunks) because fastembed does not add it. Unit tests use a small fake embedder,
 so tests and CI never download the model.
 
-**Results** (`make eval-retrieval`, full report in `reports/retrieval_eval.md`). Draft answer key,
-10 answerable questions, 11 chunks:
+**Results** (`make eval-retrieval`, full report in `reports/retrieval_eval.md`). Draft answer
+keys, 11 chunks. Hit@1 / Hit@3 / MRR:
 
-| Retriever | Hit@1 | Hit@3 | MRR |
-|---|---|---|---|
-| bm25 | 1.00 | 1.00 | 1.00 |
-| vector: bge-small, with query prefix | 0.90 | 1.00 | 0.95 |
-| vector: bge-small, no query prefix | 0.90 | 1.00 | 0.95 |
-| random ranking (expected) | 0.19 | 0.50 | n/a |
+| Retriever | Poster-worded (10) | Customer-worded (15) |
+|---|---|---|
+| bm25 | 1.00 / 1.00 / 1.00 | 0.47 / 0.67 / 0.61 |
+| vector: bge-small, with query prefix | 0.90 / 1.00 / 0.95 | **0.80 / 0.93 / 0.88** |
+| vector: bge-small, no query prefix | 0.90 / 1.00 / 0.95 | 0.73 / 0.93 / 0.84 |
+| random ranking (expected) | 0.19 / 0.50 / n/a | 0.19 / 0.51 / n/a |
 
 How to read this:
 
-- Both methods are far above random, but the test is easy: 11 chunks, and questions that reuse the
-  poster's own words, which is exactly where BM25 is strongest. The set cannot yet show what vector
-  search adds. That needs the rest of the poster transcribed and questions phrased the way
-  customers talk ("send money to another bank" rather than "Pesalink").
-- Hybrid search (merging both rankings) was not built: with BM25 at 1.00 it could not show a gain
-  on this set.
+- **Wording decides the winner.** When a question uses the poster's terms ("Pesalink", "RTGS"),
+  BM25 is perfect. When a customer describes the need instead ("8,000 bob at a shop that does
+  Co-op banking", "pay my electricity bill"), BM25 falls to 0.47 hit@1 and vector search holds at
+  0.80. Real users write like the second set, so vector retrieval is the default.
+- The bge query instruction helps only on customer wording (0.80 vs 0.73), so it stays on.
+- Shared miss: "Is tax added on top of the bank's charges?" ranks the general notes 6th or 7th
+  for every retriever, because the guide says "excise duty", never "tax". Since those notes apply
+  to every fee, the plan is to always include them in the answer context rather than rely on
+  retrieving them.
+- Small numbers: 15 questions, so one question moves hit@1 by 0.07, and 11 chunks, so even random
+  ranking gets hit@3 of 0.5. Treat these as direction, not precision.
+- Hybrid search (merging both rankings) is not built yet. On customer wording BM25 never ranked a
+  vector miss first, so there is no evidence yet that it would help.
 - The whole column-1 transcript would fit in a prompt. A "no retrieval, full context" baseline is
   still planned, to check that retrieval earns its place once the full poster is in.
 
@@ -140,8 +147,14 @@ answer is present, so that decision has to be made after retrieval.
 
 ## Evaluation
 
-`eval/questions.json` holds 15 questions, all marked **draft** until the owner has checked the
-expected answers against the poster:
+Two question sets, all marked **draft** until the owner has checked the expected answers against
+the poster.
+
+`eval/customer_questions.json` holds 15 answerable questions phrased the way a customer would ask,
+each listing the poster terms it avoids ("electricity bill", not "KPLC Postpaid"). A test checks
+that no question uses a term it claims to avoid.
+
+`eval/questions.json` holds 15 questions in the poster's own wording:
 
 - 10 answerable questions spread over all transcribed tables, including the Treasury table that no
   text extractor can read;
@@ -175,10 +188,10 @@ Page accuracy is not reported: with a one-page guide it would always be 100%.
 - `make crosscheck` compares transcript amounts with the text layer, region by region.
 - Chunking into 11 chunks with section, page and region on each, each under 512 model tokens.
 - BM25 and vector (bge-small) retrieval behind one interface.
-- `make eval-retrieval`: hit@1, hit@3, MRR against a random baseline, and a check of whether a
-  score threshold can catch fallback questions (it cannot).
-- Draft eval set of 15 questions.
-- 46 tests and CI running lint and tests.
+- `make eval-retrieval`: hit@1, hit@3, MRR on both question sets against a random baseline, and
+  a check of whether a score threshold can catch fallback questions (it cannot).
+- Draft eval sets: 15 poster-worded questions (10 answerable, 5 fallback) and 15 customer-worded.
+- 50 tests and CI running lint and tests.
 
 **Not built yet**
 
