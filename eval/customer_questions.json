@@ -1,0 +1,177 @@
+{
+  "status": "draft",
+  "edition_sha256": "0458c6257367f632fafcdc1e2187b172c26c131e9bffcb0d5bed48323497c759",
+  "notes": [
+    "DRAFT. Customer-phrased questions: each describes the need without the poster's own terms, to test retrieval on paraphrase. Expected answers must be checked by the owner before any score is reported.",
+    "avoids lists the poster terms the question deliberately does not use.",
+    "Questions where two sections hold different correct answers were left out, because each question is scored against one expected section.",
+    "Same fields and scoring rules as eval/questions.json."
+  ],
+  "questions": [
+    {
+      "id": "c01",
+      "type": "answerable",
+      "question": "How much does it cost to send money to another bank through an agent?",
+      "avoids": ["Pesalink", "Transactions"],
+      "expected_answer": "Ksh.20 for amounts above Ksh 1,000; free (Ksh.0) for 0-1,000. Agency charges do not include excise duty.",
+      "expected_values": ["Ksh.20"],
+      "expected_section": "agency-banking",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "c02",
+      "type": "answerable",
+      "question": "I want to take out 8,000 bob at a shop that does Co-op banking. What will they charge me?",
+      "avoids": ["agent", "agency", "cash withdrawals"],
+      "expected_answer": "Ksh.70 (band 5,001-10,000).",
+      "expected_values": ["Ksh.70"],
+      "expected_section": "agency-banking",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "c03",
+      "type": "answerable",
+      "question": "How much will I pay to check how much money I have left when I'm at an agent?",
+      "avoids": ["balance inquiry"],
+      "expected_answer": "Ksh.10.",
+      "expected_values": ["Ksh.10"],
+      "expected_section": "agency-banking",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "c04",
+      "type": "answerable",
+      "question": "Does it cost anything to put cash into my account at an agent?",
+      "avoids": ["cash deposits", "payments"],
+      "expected_answer": "No. Cash deposits at an agent are free for all amounts.",
+      "expected_values": ["Free"],
+      "expected_section": "agency-banking",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "c05",
+      "type": "answerable",
+      "question": "What does an agent charge me to pay my electricity bill?",
+      "avoids": ["utility payment", "KPLC", "postpaid"],
+      "expected_answer": "Ksh.50 (utility payment, KPLC postpaid).",
+      "expected_values": ["Ksh.50"],
+      "expected_section": "agency-banking",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "c06",
+      "type": "answerable",
+      "question": "My Platinum credit card got lost. How much do I pay to get a new one?",
+      "avoids": ["card replacement fees"],
+      "expected_answer": "Ksh.1000 for a Platinum card replacement, per occurrence.",
+      "expected_values": ["Ksh.1000"],
+      "expected_section": "card-fees",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "c07",
+      "type": "answerable",
+      "question": "Is there a penalty if I spend more than my credit card allows?",
+      "avoids": ["over limit fees"],
+      "expected_answer": "Yes. An over limit fee of Ksh.1000 per occurrence.",
+      "expected_values": ["Ksh.1000"],
+      "expected_section": "card-fees",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "c08",
+      "type": "answerable",
+      "question": "If I only pay part of my credit card bill, how much extra do I pay on what is left?",
+      "avoids": ["interest rate", "revolved balance"],
+      "expected_answer": "3.5% of the revolved (unpaid) balance per month.",
+      "expected_values": ["3.5%"],
+      "expected_section": "card-fees",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "c09",
+      "type": "answerable",
+      "question": "What does it cost to get cash out using my credit card?",
+      "avoids": ["cash advance fee"],
+      "expected_answer": "A cash advance fee of 6% of the amount accessed, per occurrence. Deliberately hard: agency cash withdrawal rows are a tempting wrong match.",
+      "expected_values": ["6%"],
+      "expected_section": "card-fees",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "c10",
+      "type": "answerable",
+      "question": "Do I pay for text message notifications on my credit card?",
+      "avoids": ["SMS alerts"],
+      "expected_answer": "No. SMS alerts are free.",
+      "expected_values": ["FREE"],
+      "expected_section": "card-fees",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "c11",
+      "type": "answerable",
+      "question": "How much money do I need to start a dollar account?",
+      "avoids": ["opening balance", "USD", "foreign currency"],
+      "expected_answer": "USD 10, for both current and savings accounts.",
+      "expected_values": ["USD 10"],
+      "expected_section": "foreign-currency-accounts",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "c12",
+      "type": "answerable",
+      "question": "Will I be charged for shutting down my euro savings account?",
+      "avoids": ["account closure", "EUR"],
+      "expected_answer": "Yes, EUR 5.",
+      "expected_values": ["EUR 5"],
+      "expected_section": "foreign-currency-accounts",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "c13",
+      "type": "answerable",
+      "question": "I wrote a cheque from my dollar current account by mistake. How much to cancel it before it is paid?",
+      "avoids": ["stop payments", "USD"],
+      "expected_answer": "USD 4 (stop payment on a USD current account).",
+      "expected_values": ["USD 4"],
+      "expected_section": "foreign-currency-accounts",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "c14",
+      "type": "answerable",
+      "question": "Someone overseas is sending me money. Will the bank charge me to receive it?",
+      "avoids": ["incoming SWIFT payments", "foreign transfer", "inwards"],
+      "expected_answer": "Yes. Incoming SWIFT payments are charged Ksh.500 plus excise duty.",
+      "expected_values": ["Ksh.500"],
+      "expected_section": "treasury-and-transfers",
+      "expected_page": 1,
+      "status": "draft"
+    },
+    {
+      "id": "c15",
+      "type": "answerable",
+      "question": "Is tax added on top of the bank's charges?",
+      "avoids": ["excise duty"],
+      "expected_answer": "Yes. Excise duty applies to all fees, charges and commissions.",
+      "expected_values": ["Excise duty"],
+      "expected_section": "general-notes",
+      "expected_page": 1,
+      "status": "draft"
+    }
+  ]
+}
