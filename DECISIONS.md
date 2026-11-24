@@ -73,3 +73,29 @@ Fee tables lose their meaning when a value is separated from its header or band.
 rows from one table only, every row repeats its column names, and tables over 12 rows split into
 balanced parts between items, never inside one (all seven agency withdrawal bands stay together).
 Chunk ids are `<section>-<nn>` so they stay stable for citations and eval results.
+
+## 006. Vector retrieval with bge-small through fastembed; no score threshold for fallback
+
+Status: accepted
+
+Embeddings come from BAAI/bge-small-en-v1.5 (384 dimensions), run locally on CPU by `fastembed`
+through ONNX Runtime. It needs no API key and no torch. Rejected: sentence-transformers (same
+model, but torch adds over 1 GB to install and CI) and model2vec (smaller and faster, lower
+quality).
+
+Two findings from building it:
+
+- One chunk was 529 tokens against the model's 512-token window, so its last rows would have been
+  dropped without any error. Chunks are now capped at 1,500 characters (largest: 386 tokens), and
+  `VectorRetriever` refuses to index any chunk over the model's limit.
+- fastembed's `query_embed` does not add the query instruction the bge model card recommends. We
+  add it ourselves. On the current eval it makes no difference (both variants: hit@1 0.90, MRR
+  0.95).
+
+Results on the draft eval (10 questions, 11 chunks): BM25 hit@1 1.00, vector 0.90, random 0.19.
+BM25 is kept as the baseline and both retrievers stay. The current questions use the poster's
+wording, so they cannot show the paraphrase cases vector search is meant for.
+
+Fallback will not use a retrieval score threshold. For every retriever, the highest-scoring
+fallback question scored above the lowest-scoring answerable one (vector 0.707 vs 0.578, BM25
+8.156 vs 2.416). Whether the answer is present is decided after retrieval instead.

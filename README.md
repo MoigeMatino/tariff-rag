@@ -1,7 +1,7 @@
 # tariff-rag
 
-Status: in progress. Ingestion and chunking are built; retrieval, answering and the evaluation
-runner are not. See [Status](#status).
+Status: in progress. Ingestion, chunking, BM25 and vector retrieval, and a retrieval eval are
+built; answer generation, citations and fallback are not. See [Status](#status).
 
 A question-answering assistant over Co-op Bank Kenya's published tariff guide. The goal: answer
 questions like "how much is an agent withdrawal of Ksh 15,000?" with the fee, a citation to the
@@ -31,8 +31,9 @@ flowchart LR
     transcript --> crosscheck
     transcript --> chunker["Chunker"]
     chunker --> chunks[("Chunks with section, page, region")]
-    chunks -.-> retriever["BM25 retriever (planned)"]
-    question["User question"] -.-> retriever
+    chunks --> retriever["BM25 or vector retriever"]
+    question["User question"] --> retriever
+    retriever --> reval["make eval-retrieval"]
     retriever -.-> llm["Claude with cited context (planned)"]
     llm -.-> checks["Citation and fallback checks (planned)"]
     checks -.-> answer["Answer with citations or fallback"]
@@ -64,23 +65,49 @@ checked by eye.
 - Every row is written as `column: value` pairs, so a value never loses its header. The row
   `Above 1,000 | Ksh.20` becomes `Service: Pesalink Transactions | Range (Ksh.): Above 1,000 |
   Cost (...): Ksh.20`, under `Section: Agency Tariff Guide`.
-- Tables longer than 12 rows are split into balanced parts, only between items. All seven cash
-  withdrawal bands stay in one chunk, as do rows under one sub-heading.
+- Tables longer than 12 rows or 1,500 characters are split into balanced parts, only between
+  items. All seven cash withdrawal bands stay in one chunk, as do rows under one sub-heading.
+- The character cap exists because bge-small reads at most 512 tokens and silently drops the
+  rest. Measured with its tokenizer, the largest chunk is 386 tokens, and the vector retriever
+  refuses to index any chunk over the limit.
 - Chunk ids (`agency-banking-01`) depend only on section and position, so they are stable.
 
-## Retrieval (planned)
+## Retrieval
 
-Two options were considered:
+Two retrievers share one interface (`search(query, k)` returning scored chunks, best first), so
+they can be compared on the same questions (`src/tariff_rag/retrieval.py`):
 
-| | BM25 (`rank-bm25`) | Local embeddings (e.g. bge-small) |
+| | BM25 | Vector |
 |---|---|---|
-| Good at | exact terms: "Pesalink", "RTGS", "Ksh." amounts | paraphrases: "send money to another bank" |
-| Cost | misses synonyms the poster does not use | new heavy dependency (torch), harder to explain |
+| How | `rank-bm25` over tokens; "Ksh.1,500" and "1500" match | cosine similarity of [bge-small-en-v1.5](https://huggingface.co/BAAI/bge-small-en-v1.5) embeddings |
+| Runs on | pure Python | ONNX Runtime on CPU through `fastembed`; no API key, no torch |
+| Good at | exact terms: "Pesalink", "RTGS", "YEA" | paraphrases the poster does not use |
+| Index | in memory | numpy matrix in memory; one matrix-vector product per query |
 
-The plan is BM25 first, with a small hand-written synonym list, and to add embeddings only if the
-eval shows retrieval misses on paraphrased questions. The whole poster is small enough to fit in a
-prompt, so "no retrieval, full context" will also be run as a baseline to check that retrieval
-earns its place.
+Vectors are L2-normalised, so the dot product is the cosine. The bge query instruction is added to
+questions (not to chunks) because fastembed does not add it. Unit tests use a small fake embedder,
+so tests and CI never download the model.
+
+**Results** (`make eval-retrieval`, full report in `reports/retrieval_eval.md`). Draft answer key,
+10 answerable questions, 11 chunks:
+
+| Retriever | Hit@1 | Hit@3 | MRR |
+|---|---|---|---|
+| bm25 | 1.00 | 1.00 | 1.00 |
+| vector: bge-small, with query prefix | 0.90 | 1.00 | 0.95 |
+| vector: bge-small, no query prefix | 0.90 | 1.00 | 0.95 |
+| random ranking (expected) | 0.19 | 0.50 | n/a |
+
+How to read this:
+
+- Both methods are far above random, but the test is easy: 11 chunks, and questions that reuse the
+  poster's own words, which is exactly where BM25 is strongest. The set cannot yet show what vector
+  search adds. That needs the rest of the poster transcribed and questions phrased the way
+  customers talk ("send money to another bank" rather than "Pesalink").
+- Hybrid search (merging both rankings) was not built: with BM25 at 1.00 it could not show a gain
+  on this set.
+- The whole column-1 transcript would fit in a prompt. A "no retrieval, full context" baseline is
+  still planned, to check that retrieval earns its place once the full poster is in.
 
 ## Citations and fallback (planned)
 
@@ -92,10 +119,15 @@ and render the rest as "Page 1, Agency Tariff Guide".
 **Fallback.** The answer is replaced with "The tariff guide does not cover this." when any of
 these hold:
 
-1. no chunk scores above a retrieval threshold (the model is not called);
-2. the model returns the fallback sentinel it is instructed to use when the context lacks the
+1. the model returns the fallback sentinel it is instructed to use when the context lacks the
    answer;
-3. the answer has no valid citation.
+2. the answer has no valid citation.
+
+A retrieval score threshold was planned as a first gate but **the eval rules it out**: for both
+retrievers, some fallback question scores higher than some answerable one (vector: 0.707 for
+"Equity Bank agent withdrawal" vs 0.578 for a real question; BM25: "Gold or Platinum card?" scores
+highest of all, since every word is in the card table). Similarity measures topic, not whether the
+answer is present, so that decision has to be made after retrieval.
 
 ## Guardrails (planned)
 
@@ -120,11 +152,11 @@ Each question has `expected_values` (strings a correct answer must contain), `ex
 and `expected_page`. A test already checks that each expected value appears in the section the
 question points at.
 
-Planned scoring, all deterministic:
+Scoring, all deterministic. Retrieval metrics are built; the rest are planned:
 
 | Metric | Measures |
 |---|---|
-| Retrieval hit@k | expected section is in the top k chunks |
+| Retrieval hit@k and MRR (built) | a chunk from the expected section is in the top k; how high |
 | Answer accuracy | all `expected_values` appear in the answer after normalising case and spacing |
 | Citation accuracy | the cited section is the expected section |
 | Fallback precision and recall | fallback fires on the 5 fallback questions and only on them |
@@ -141,16 +173,20 @@ Page accuracy is not reported: with a one-page guide it would always be 100%.
   agency banking, foreign currency accounts, Treasury and transfers, YEA account). All sections
   are **draft**: transcribed from rendered crops, not yet checked by the owner.
 - `make crosscheck` compares transcript amounts with the text layer, region by region.
-- Chunking into 10 chunks with section, page and region on each.
+- Chunking into 11 chunks with section, page and region on each, each under 512 model tokens.
+- BM25 and vector (bge-small) retrieval behind one interface.
+- `make eval-retrieval`: hit@1, hit@3, MRR against a random baseline, and a check of whether a
+  score threshold can catch fallback questions (it cannot).
 - Draft eval set of 15 questions.
-- 29 tests and CI running lint and tests.
+- 46 tests and CI running lint and tests.
 
 **Not built yet**
 
 - Transcription of poster columns 2 and 3 (most of the guide).
-- Retrieval, answer generation, citation checks, fallback and guardrails.
+- Answer generation, citation checks, fallback and guardrails.
+- Hybrid retrieval and the full-context baseline.
 - FastAPI endpoint.
-- Eval runner and results. No accuracy numbers exist yet.
+- Answer-level eval. Only retrieval is measured so far.
 
 ## Run it
 
@@ -162,6 +198,7 @@ make verify-source
 make check        # lint and tests
 make inspect      # text-layer report and poster tiles
 make crosscheck   # transcript amounts vs. the PDF text layer
+make eval-retrieval  # BM25 vs vector; downloads bge-small (~130 MB) on first run
 ```
 
 Design decisions and the evidence behind them are in [DECISIONS.md](DECISIONS.md).
