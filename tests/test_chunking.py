@@ -1,4 +1,10 @@
-from tariff_rag.chunking import chunk_section, chunk_transcript, item_blocks, pack_blocks
+from tariff_rag.chunking import (
+    MAX_CHARS,
+    chunk_section,
+    chunk_transcript,
+    item_blocks,
+    pack_blocks,
+)
 from tariff_rag.transcript import Row, Section, load_transcript
 
 
@@ -75,3 +81,16 @@ def test_agency_pesalink_bands_share_a_chunk():
     pesalink = [c for c in agency if "Pesalink" in c.text]
     assert len(pesalink) == 1
     assert "0-1,000" in pesalink[0].text and "Above 1,000" in pesalink[0].text
+
+
+def test_long_rows_force_a_split_even_under_the_row_limit():
+    rows = [{"cells": [f"Item {i}", "x" * 200, "Ksh.1"]} for i in range(6)]
+    chunks = chunk_section(section(rows), max_rows=12, max_chars=800)
+    assert len(chunks) > 1
+    assert all(len(c.text) <= 800 for c in chunks)
+
+
+def test_real_chunks_fit_the_character_budget():
+    # Keeps every chunk inside a 512-token embedding window (see MAX_CHARS).
+    for c in chunk_transcript(load_transcript()):
+        assert len(c.text) <= MAX_CHARS, c.id

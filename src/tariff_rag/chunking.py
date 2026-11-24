@@ -7,6 +7,7 @@ Rules:
 - Large tables are split into groups of rows, but only between items. The seven cash withdrawal
   bands share one label and always land in the same chunk, even if that chunk runs over the limit.
   Rows under one sub-heading (a row group) are kept together the same way.
+- A table is split when it has more than MAX_ROWS rows or more than MAX_CHARS characters.
 - Chunk ids depend only on section id and position, so they stay stable between runs.
 """
 
@@ -16,6 +17,9 @@ from dataclasses import dataclass
 from tariff_rag.transcript import Row, Section, Transcript
 
 MAX_ROWS = 12
+# Small embedding models such as bge-small read at most 512 tokens and silently drop the rest.
+# This text runs at about 3.2 characters per token, so 1,500 characters leaves some headroom.
+MAX_CHARS = 1500
 
 
 @dataclass(frozen=True)
@@ -55,13 +59,16 @@ def _item_key(row: Row) -> str:
     return row.group if row.group else row.cells[0]
 
 
-def pack_blocks(blocks: list[tuple[int, int]], max_rows: int) -> list[tuple[int, int]]:
+def pack_blocks(
+    blocks: list[tuple[int, int]], max_rows: int, min_chunks: int = 1
+) -> list[tuple[int, int]]:
     """Fills chunks with whole blocks, aiming for chunks of even size.
 
     A 13-row table with max_rows=12 becomes about 7 + 6 rows rather than 12 + 1.
+    min_chunks forces more splits, for tables that have few rows but long ones.
     """
     total = blocks[-1][1] - blocks[0][0] if blocks else 0
-    n_chunks = max(1, math.ceil(total / max_rows))
+    n_chunks = max(min_chunks, math.ceil(total / max_rows))
     limit = math.ceil(total / n_chunks)
     spans: list[tuple[int, int]] = []
     for start, end in blocks:
@@ -72,12 +79,19 @@ def pack_blocks(blocks: list[tuple[int, int]], max_rows: int) -> list[tuple[int,
     return spans
 
 
-def chunk_section(section: Section, max_rows: int = MAX_ROWS) -> list[Chunk]:
+def chunk_section(
+    section: Section, max_rows: int = MAX_ROWS, max_chars: int = MAX_CHARS
+) -> list[Chunk]:
     header = [f"Section: {section.title}", "Columns: " + " | ".join(section.columns)]
     header += [f"Note: {note}" for note in section.notes]
+    lines = [row_text(section.columns, row) for row in section.rows]
+    # Every chunk repeats the header, so only the space left after it is shared by the rows.
+    row_budget = max(1, max_chars - len("\n".join(header)) - 1)
+    min_chunks = math.ceil(sum(len(line) + 1 for line in lines) / row_budget)
+    spans = pack_blocks(item_blocks(section.rows), max_rows, min_chunks)
     chunks = []
-    for n, (start, end) in enumerate(pack_blocks(item_blocks(section.rows), max_rows), 1):
-        body = [row_text(section.columns, row) for row in section.rows[start:end]]
+    for n, (start, end) in enumerate(spans, 1):
+        body = lines[start:end]
         chunks.append(
             Chunk(
                 id=f"{section.id}-{n:02d}",
@@ -93,5 +107,7 @@ def chunk_section(section: Section, max_rows: int = MAX_ROWS) -> list[Chunk]:
     return chunks
 
 
-def chunk_transcript(transcript: Transcript, max_rows: int = MAX_ROWS) -> list[Chunk]:
-    return [c for s in transcript.sections for c in chunk_section(s, max_rows)]
+def chunk_transcript(
+    transcript: Transcript, max_rows: int = MAX_ROWS, max_chars: int = MAX_CHARS
+) -> list[Chunk]:
+    return [c for s in transcript.sections for c in chunk_section(s, max_rows, max_chars)]
